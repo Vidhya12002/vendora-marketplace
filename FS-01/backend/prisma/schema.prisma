@@ -1,0 +1,91 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CUSTOMER
+  VENDOR
+  ADMIN
+}
+
+enum Status {
+  PLACED
+  PACKED
+  SHIPPED
+  DELIVERED
+}
+
+model User {
+  id                Int       @id @default(autoincrement())
+  email             String    @unique
+  password          String
+  name              String
+  role              Role      @default(CUSTOMER)
+  razorpayAccountId String?
+  deletedAt         DateTime?
+  products          Product[]
+  orders            Order[]
+  reviews           Review[]
+}
+
+model Product {
+  id          Int         @id @default(autoincrement())
+  title       String
+  description String      @default("")
+  price       Float
+  stock       Int
+  category    String
+  image       String?
+  createdAt   DateTime    @default(now())
+  vendorId    Int
+  vendor      User        @relation(fields: [vendorId], references: [id])
+  reviews     Review[]
+  items       OrderItem[]
+}
+
+model Order {
+  id         Int         @id @default(autoincrement())
+  customerId Int
+  customer   User        @relation(fields: [customerId], references: [id])
+  total      Float
+  discount   Float       @default(0)
+  paymentRef String?
+  createdAt  DateTime    @default(now())
+  items      OrderItem[]
+}
+
+model OrderItem {
+  id            Int     @id @default(autoincrement())
+  orderId       Int
+  order         Order   @relation(fields: [orderId], references: [id])
+  productId     Int
+  product       Product @relation(fields: [productId], references: [id])
+  vendorId      Int
+  qty           Int
+  price         Float
+  commission    Float
+  vendorEarning Float
+  status        Status  @default(PLACED)
+}
+
+model Review {
+  id        Int     @id @default(autoincrement())
+  rating    Int
+  comment   String
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
+  userId    Int
+  user      User    @relation(fields: [userId], references: [id])
+}
+
+model Coupon {
+  id      Int     @id @default(autoincrement())
+  code    String  @unique
+  percent Int
+  active  Boolean @default(true)
+}
