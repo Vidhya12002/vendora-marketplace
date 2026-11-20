@@ -3,7 +3,21 @@ import { PrismaClient } from '@prisma/client'; import Redis from 'ioredis'; impo
 import multer from 'multer'; import crypto from 'crypto'; import fs from 'fs'; import path from 'path';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'; import { Client as ES } from '@elastic/elasticsearch'; import Razorpay from 'razorpay';
 const prisma = new PrismaClient(); export const app = express(); const E = process.env;
-app.use(cors({ origin: E.CORS_ORIGIN ? E.CORS_ORIGIN.split(',') : true }), express.json()); app.use('/uploads', express.static('uploads'));
+
+const allowedOrigins = (E.CORS_ORIGIN || '')
+  .split(',')
+  .map(origin => origin.trim())
+  .filter(Boolean);
+
+console.log('Allowed CORS origins:', allowedOrigins);
+
+app.use(cors({
+  origin: allowedOrigins.length > 0 ? allowedOrigins : true,
+}));
+
+app.use(express.json());
+app.use('/uploads', express.static('uploads'));
+
 const SECRET = E.JWT_SECRET || 'dev'; const COMMISSION = Number(E.COMMISSION_PERCENT || 10);
 const rzp = E.RAZORPAY_KEY_ID ? new Razorpay({ key_id: E.RAZORPAY_KEY_ID, key_secret: E.RAZORPAY_KEY_SECRET! }) : null;
 const s3 = E.S3_BUCKET ? new S3Client({ region: E.AWS_REGION }) : null; const es = E.ES_URL ? new ES({ node: E.ES_URL }) : null;
