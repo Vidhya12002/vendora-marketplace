@@ -28,10 +28,17 @@ export default function App() {
     setMenu(false);
   };
 
-  const refreshCart = () =>
-    req('/cart')
-      .then((cart) => setCartCount(Object.values(cart).reduce((sum: number, n: any) => sum + n, 0)))
-      .catch((e) => e.message.includes('sign in') && signOut());
+const refreshCart = () =>
+  req('/cart')
+    .then((cart) => {
+      const quantities = Object.values(cart as Record<string, number>);
+      const total = quantities.reduce(
+        (sum, quantity) => sum + Number(quantity || 0),
+        0
+      );
+      setCartCount(total);
+    })
+    .catch((e) => e.message.includes('sign in') && signOut());
 
   useEffect(() => {
     if (user?.role === 'CUSTOMER') refreshCart();
