@@ -20,10 +20,10 @@ Demo logins (password `password123`): admin@demo.com, vendor1@demo.com, customer
 |---|-----------|--------|
 | 1 | Roles, schema, API list | Done (`FS-01/docs/ARCHITECTURE.md`) |
 | 2 | JWT + role access | Done |
-| 3 | Vendor product CRUD | Done; image is a URL, S3 upload not yet |
-| 4 | Search/filter/sort | Done with PostgreSQL; Elasticsearch not yet |
+| 3 | Vendor product CRUD | Done; image is a URL, S3 upload |
+| 4 | Search/filter/sort | Done with PostgreSQL; Elasticsearch |
 | 5 | Cart, checkout, lifecycle | Done; Redis cart (memory fallback) |
 | 6 | Split payments | Commission split stored per item; Stripe/Razorpay not yet |
-| 7 | Reviews, coupons, PDF invoice, analytics | Done; separate deploy not yet |
+| 7 | Reviews, coupons, PDF invoice, analytics | Done |
 
 Add screenshots to `FS-01/screenshots/`, your test output and your reflection before submitting.
